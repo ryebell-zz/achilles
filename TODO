@@ -1,1 +1,2 @@
 - add parsing to find non-HTTPS URIs.
+- add feature to pull SSL certificate information
