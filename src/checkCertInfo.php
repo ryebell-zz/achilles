@@ -27,10 +27,4 @@ class CertificateScanner {
     }
 }
 
-$test = new CertificateScanner;
-$test->set_parameters('nexcess.net', '443');
-$test->scan_certificate();
-#$test->valid_from->format('m-d-Y H:i:s');
-#$test->valid_to->format('m-d-Y H:i:s');
-echo "CN = " . $test->common_name . " " . "Issuer = " . $test->issuer . " " . "Valid From: " . $test->valid_from . " " . "Valid To: " . $test->valid_to . "\n";
 ?>
