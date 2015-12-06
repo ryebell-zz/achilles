@@ -2,22 +2,23 @@
 
 <?php
 
-
+use Heel\CertificateScanner;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 require 'vendor/autoload.php';
 
 $app = new Application('achilles', '1.0');
-$app->register('scan')
-    ->setDescription('Scan target for HTTPS mixed content')
-    ->addArgument('URI', InputArgument::REQUIRED, 'Target URI to Scan')
-    ->setCode(function(InputInterface $input, OutputInterface $output)
+$app->register('check-ssl')
+    ->setDescription('Retrieves information about SSL certificate in use by the remote host.')
+    ->addArgument('URL', InputArgument::REQUIRED, 'Target URL to Scan')
+    ->addOption('port', null, InputOption::VALUE_OPTIONAL, 'Specify port (default is 443)', '443'); 
     {
         // call method on target and return URLs.
-    });
+    };
 
 $app->run();
 ?>

@@ -1,5 +1,7 @@
 <?php
 
+namespace Heel\modules;
+
 class Readable_DateTime extends DateTime {
 
     public function __toString()

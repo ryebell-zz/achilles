@@ -2,5 +2,10 @@
     "require": {
         "symfony/console": "~2.0",
         "guzzlehttp/guzzle": "^6.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Heel\\": "src"
+        }
     }
 }
