@@ -49,7 +49,7 @@ Achilles is completely open source and contributions are encouraged. When submit
 ### License:
 [MIT]
 
-[PHP]: <http://www.php.net/>
+[PHP 5.X]: <http://www.php.net/>
 [Composer]: <https://github.com/composer/composer>
 [Symfony]: <https://github.com/symfony/symfony>
 [MIT]: <https://tldrlegal.com/license/mit-license>
