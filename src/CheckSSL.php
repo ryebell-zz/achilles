@@ -33,8 +33,8 @@ class CheckSSL extends Command {
         $this->issuer=$cert_data['issuer']['O'];
         $this->valid_from=date('m-d-Y H:i:s', strval($cert_data['validFrom_time_t']));
         $this->valid_to=date('m-d-Y H:i:s', strval($cert_data['validTo_time_t']));
-        $info = "Main Domain: " . $this->common_name . "\n" . "Issuer: " . $this->issuer . "\n" . "Creation Date: " . $this->valid_from . "\n" . "Valid Until: " . $this->valid_to;
-        $output->writeln("<info>{$info}</info>");
+        $info = "<info>Main Domain:</info> " . $this->common_name . "\n" . "<info>Issuer:</info> " . $this->issuer . "\n" . "<info>Creation Date:</info> " . $this->valid_from . "\n" . "<info>Valid Until:</info> " . $this->valid_to;
+        $output->writeln("{$info}");
     }
 }
 
