@@ -12,5 +12,5 @@ $app = new Application('achilles', '1.0');
 $app->add(new CheckSSL);
 
 $app->run();
-?>
 
+?>
