@@ -11,8 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 #require '../vendor/autoload.php';
 
 class CheckSSL extends Command {
-    private $target;
-    private $target_port;
 
     public function configure()
     {
