@@ -1,7 +1,8 @@
 ## Todo
-- add parsing to find non-HTTPS URIs.
+- add parsing to find non-HTTPS URLs.
+- pull information regarding supported cipher suites.
 
 ## Doing
 
 ## Done
-- add feature to pull SSL certificate information
+- add feature to pull SSL certificate information.
