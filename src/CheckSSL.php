@@ -19,6 +19,23 @@ class CheckSSL extends Command {
 
     }
 
+    public function parse_alternative_names()
+    {
+        $this->alternative_names = explode(',',$this->alternative_names);
+        foreach ($this->alternative_names as $row)
+            {
+                $this->alt_names[] = preg_replace('/DNS:/', '', $row);
+            }
+    }
+
+    #public function print_alt_names()
+   #{
+    #    foreach ($this->alt_names as $alt_name)
+    #    {
+    #        #update and grab variable
+    #    }
+    #}
+
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $target = $input->getArgument('URL');
@@ -30,10 +47,13 @@ class CheckSSL extends Command {
         $cert = openssl_x509_read($cont["options"]["ssl"]["peer_certificate"]);
         $cert_data = openssl_x509_parse( $cert );
         $this->common_name=$cert_data['subject']['CN'];
+        $this->alternative_names=$cert_data['extensions']['subjectAltName'];
         $this->issuer=$cert_data['issuer']['O'];
         $this->valid_from=date('m-d-Y H:i:s', strval($cert_data['validFrom_time_t']));
         $this->valid_to=date('m-d-Y H:i:s', strval($cert_data['validTo_time_t']));
-        $info = "<info>Main Domain:</info> " . $this->common_name . "\n" . "<info>Issuer:</info> " . $this->issuer . "\n" . "<info>Creation Date:</info> " . $this->valid_from . "\n" . "<info>Valid Until:</info> " . $this->valid_to;
+        $this->parse_alternative_names();
+        $alt_domains = join(',', $this->alt_names);
+        $info = "<info>Main Domain:</info> " . $this->common_name . "\n" . "<info>Alternative Domains:</info> " . "{$alt_domains}"  . "\n" . "<info>Issuer:</info> " . $this->issuer . "\n" . "<info>Creation Date:</info> " . $this->valid_from . "\n" . "<info>Valid Until:</info> " . $this->valid_to;
         $output->writeln("{$info}");
     }
 }
