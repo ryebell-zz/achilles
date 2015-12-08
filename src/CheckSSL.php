@@ -28,14 +28,6 @@ class CheckSSL extends Command {
             }
     }
 
-    #public function print_alt_names()
-   #{
-    #    foreach ($this->alt_names as $alt_name)
-    #    {
-    #        #update and grab variable
-    #    }
-    #}
-
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $target = $input->getArgument('URL');
