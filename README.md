@@ -8,6 +8,7 @@ Achilles is a multi-purpose, modular scanning utility for websites, with a curre
 
 ### Requirements
 * [PHP 5.X]
+    * With the [curl module] installed.
 * [Composer]
 * [Symfony]
 
@@ -50,6 +51,7 @@ Achilles is completely open source and contributions are encouraged. When submit
 [MIT]
 
 [PHP 5.X]: <http://www.php.net/>
+[curl module] <http://php.net/manual/en/book.curl.php>
 [Composer]: <https://github.com/composer/composer>
 [Symfony]: <https://github.com/symfony/symfony>
 [MIT]: <https://tldrlegal.com/license/mit-license>
