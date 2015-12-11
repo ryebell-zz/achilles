@@ -11,7 +11,8 @@ Class CheckCiphers extends Command {
     {
         $this->setname('check-ciphers')
             ->setDescription('Scans available ciphers from remote web server.')
-            ->addArgument('host', InputArgument::REQUIRED, 'Target host to Scan');
+            ->addArgument('host', InputArgument::REQUIRED,
+                'Target host to Scan');
     }
 
     public function getCiphers()
@@ -32,7 +33,8 @@ Class CheckCiphers extends Command {
                 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                 $result = curl_exec($ch);
                 curl_close($ch);
-                echo "{$cipher} = " . (boolval($result) ? 'True' : 'False' ) . "\n";
+                echo "{$cipher} = " . 
+                    (boolval($result) ? 'True' : 'False' ) . "\n";
                 usleep(250000);
             }
 
