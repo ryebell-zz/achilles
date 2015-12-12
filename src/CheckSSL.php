@@ -13,9 +13,11 @@ class CheckSSL extends Command {
     public function configure()
     {
         $this->setname('check-ssl')
-            ->setDescription('Retrieves information about SSL certificate in use by the remote host.')
+            ->setDescription('Retrieves information about SSL certificate in
+            use by the remote host.')
             ->addArgument('URL', InputArgument::REQUIRED, 'Target URL to Scan')
-            ->addOption('port', null, InputOption::VALUE_OPTIONAL, 'Specify port (default is 443)', '443');
+            ->addOption('port', null, InputOption::VALUE_OPTIONAL, 
+            'Specify port (default is 443)', '443');
 
     }
 
@@ -32,8 +34,10 @@ class CheckSSL extends Command {
     {
         $target = $input->getArgument('URL');
         $target_port = $input->getOption('port');
-        $g = stream_context_create (array("ssl" => array("capture_peer_cert" => true)));
-        $r = stream_socket_client("ssl://$target:$target_port", $errno, $errstr, 30,
+        $g = stream_context_create (
+            array("ssl" => array("capture_peer_cert" => true)));
+        $r = stream_socket_client(
+            "ssl://$target:$target_port", $errno, $errstr, 30,
                 STREAM_CLIENT_CONNECT, $g);
         $cont = stream_context_get_params($r);
         $cert = openssl_x509_read($cont["options"]["ssl"]["peer_certificate"]);
@@ -41,11 +45,17 @@ class CheckSSL extends Command {
         $this->common_name=$cert_data['subject']['CN'];
         $this->alternative_names=$cert_data['extensions']['subjectAltName'];
         $this->issuer=$cert_data['issuer']['O'];
-        $this->valid_from=date('m-d-Y H:i:s', strval($cert_data['validFrom_time_t']));
-        $this->valid_to=date('m-d-Y H:i:s', strval($cert_data['validTo_time_t']));
+        $this->valid_from=date('m-d-Y H:i:s', 
+            strval($cert_data['validFrom_time_t']));
+        $this->valid_to=date('m-d-Y H:i:s', 
+            strval($cert_data['validTo_time_t']));
         $this->parse_alternative_names();
         $alt_domains = join(',', $this->alt_names);
-        $info = "<info>Main Domain:</info> " . $this->common_name . "\n" . "<info>Alternative Domains:</info> " . "{$alt_domains}"  . "\n" . "<info>Issuer:</info> " . $this->issuer . "\n" . "<info>Creation Date:</info> " . $this->valid_from . "\n" . "<info>Valid Until:</info> " . $this->valid_to;
+        $info = "<info>Main Domain:</info> " . $this->common_name . "\n" . 
+            "<info>Alternative Domains:</info> " . "{$alt_domains}"  . "\n" . 
+            "<info>Issuer:</info> " . $this->issuer . "\n" . 
+            "<info>Creation Date:</info> " . $this->valid_from . 
+            "\n" . "<info>Valid Until:</info> " . $this->valid_to;
         $output->writeln("{$info}");
     }
 }
