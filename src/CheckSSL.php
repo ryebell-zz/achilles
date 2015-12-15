@@ -42,6 +42,11 @@ class CheckSSL extends Command {
         $cont = stream_context_get_params($r);
         $cert = openssl_x509_read($cont["options"]["ssl"]["peer_certificate"]);
         $cert_data = openssl_x509_parse( $cert );
+        openssl_x509_export($cert, $out, FALSE);
+        $signature_algorithm = null;
+        if(preg_match('/^\s+Signature Algorithm:\s*(.*)\s*$/m', $out, $match)) 
+            $signature_algorithm = $match[1];
+        $this->sha_type=$signature_algorithm;
         $this->common_name=$cert_data['subject']['CN'];
         $this->alternative_names=$cert_data['extensions']['subjectAltName'];
         $this->issuer=$cert_data['issuer']['O'];
@@ -55,7 +60,8 @@ class CheckSSL extends Command {
             "<info>Alternative Domains:</info> " . "{$alt_domains}"  . "\n" . 
             "<info>Issuer:</info> " . $this->issuer . "\n" . 
             "<info>Creation Date:</info> " . $this->valid_from . 
-            "\n" . "<info>Valid Until:</info> " . $this->valid_to;
+            "\n" . "<info>Valid Until:</info> " . $this->valid_to . "\n" . 
+            "<info>Signature Algorithm:</info> " . $this->sha_type;
         $output->writeln("{$info}");
     }
 }
