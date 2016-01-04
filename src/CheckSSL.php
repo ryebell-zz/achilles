@@ -21,6 +21,30 @@ class CheckSSL extends Command {
 
     }
 
+    public function make_request()
+    {                                   
+        $g = stream_context_create (                                            
+            array("ssl" => array("capture_peer_cert" => true)));                
+        $r = stream_socket_client(                                              
+            "ssl://$this->target:$this->target_port", $errno, $errstr, 30,                  
+                STREAM_CLIENT_CONNECT, $g);                                     
+        $cont = stream_context_get_params($r);                                  
+        $cert = openssl_x509_read($cont["options"]["ssl"]["peer_certificate"]); 
+        $cert_data = openssl_x509_parse( $cert );                               
+        openssl_x509_export($cert, $out, FALSE);                                
+        $signature_algorithm = null;                                            
+        if(preg_match('/^\s+Signature Algorithm:\s*(.*)\s*$/m', $out, $match))  
+            $signature_algorithm = $match[1];                                   
+        $this->sha_type=$signature_algorithm;                                   
+        $this->common_name=$cert_data['subject']['CN'];                         
+        $this->alternative_names=$cert_data['extensions']['subjectAltName'];    
+        $this->issuer=$cert_data['issuer']['O'];                                
+        $this->valid_from=date('m-d-Y H:i:s',                                   
+            strval($cert_data['validFrom_time_t']));                            
+        $this->valid_to=date('m-d-Y H:i:s',                                     
+            strval($cert_data['validTo_time_t']));                              
+        $this->parse_alternative_names();                                       
+    }
     public function parse_alternative_names()
     {
         $this->alternative_names = explode(',',$this->alternative_names);
@@ -28,36 +52,16 @@ class CheckSSL extends Command {
             {
                 $this->alt_names[] = preg_replace('/DNS:/', '', $row);
             }
+        $this->alt_domains = join(',', $this->alt_names);
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $target = $input->getArgument('URL');
-        $target_port = $input->getOption('port');
-        $g = stream_context_create (
-            array("ssl" => array("capture_peer_cert" => true)));
-        $r = stream_socket_client(
-            "ssl://$target:$target_port", $errno, $errstr, 30,
-                STREAM_CLIENT_CONNECT, $g);
-        $cont = stream_context_get_params($r);
-        $cert = openssl_x509_read($cont["options"]["ssl"]["peer_certificate"]);
-        $cert_data = openssl_x509_parse( $cert );
-        openssl_x509_export($cert, $out, FALSE);
-        $signature_algorithm = null;
-        if(preg_match('/^\s+Signature Algorithm:\s*(.*)\s*$/m', $out, $match)) 
-            $signature_algorithm = $match[1];
-        $this->sha_type=$signature_algorithm;
-        $this->common_name=$cert_data['subject']['CN'];
-        $this->alternative_names=$cert_data['extensions']['subjectAltName'];
-        $this->issuer=$cert_data['issuer']['O'];
-        $this->valid_from=date('m-d-Y H:i:s', 
-            strval($cert_data['validFrom_time_t']));
-        $this->valid_to=date('m-d-Y H:i:s', 
-            strval($cert_data['validTo_time_t']));
-        $this->parse_alternative_names();
-        $alt_domains = join(',', $this->alt_names);
+        $this->target = $input->getArgument('URL');
+        $this->target_port = $input->getOption('port');
+        $this->make_request();    
         $info = "<info>Main Domain:</info> " . $this->common_name . "\n" . 
-            "<info>Alternative Domains:</info> " . "{$alt_domains}"  . "\n" . 
+            "<info>Alternative Domains:</info> " . "{$this->alt_domains}"  . "\n" . 
             "<info>Issuer:</info> " . $this->issuer . "\n" . 
             "<info>Creation Date:</info> " . $this->valid_from . 
             "\n" . "<info>Valid Until:</info> " . $this->valid_to . "\n" . 
