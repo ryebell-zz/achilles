@@ -18,7 +18,6 @@ class CheckSSL extends Command {
             ->addArgument('URL', InputArgument::REQUIRED, 'Target URL to Scan')
             ->addOption('port', null, InputOption::VALUE_OPTIONAL, 
             'Specify port (default is 443)', '443');
-
     }
 
     public function make_request()
