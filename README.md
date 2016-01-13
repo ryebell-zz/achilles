@@ -4,7 +4,7 @@ Achilles is a multi-purpose, modular scanning utility for websites, with a curre
 
 ### Version
 
-1.0.0
+1.0.1
 
 ### Requirements
 * [PHP 5.X]
