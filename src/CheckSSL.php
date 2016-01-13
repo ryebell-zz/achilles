@@ -24,15 +24,20 @@ class CheckSSL extends Command {
     {                                   
         $g = stream_context_create (                                            
             array("ssl" => array("capture_peer_cert" => true)));                
+        set_error_handler(function(){return true;});
         $r = stream_socket_client(                                              
             "ssl://$this->target:$this->target_port", $errno, $errstr, 30,                  
-                STREAM_CLIENT_CONNECT, $g);                                     
+             STREAM_CLIENT_CONNECT, $g);                                     
+        restore_error_handler();
+        if (!$r) {
+            return true;
+        } else {
         $cont = stream_context_get_params($r);                                  
         $cert = openssl_x509_read($cont["options"]["ssl"]["peer_certificate"]); 
         $cert_data = openssl_x509_parse( $cert );                               
         openssl_x509_export($cert, $out, FALSE);                                
         $signature_algorithm = null;                                            
-        if(preg_match('/^\s+Signature Algorithm:\s*(.*)\s*$/m', $out, $match))  
+        if (preg_match('/^\s+Signature Algorithm:\s*(.*)\s*$/m', $out, $match))  
             $signature_algorithm = $match[1];                                   
         $this->sha_type=$signature_algorithm;                                   
         $this->common_name=$cert_data['subject']['CN'];                         
@@ -42,7 +47,8 @@ class CheckSSL extends Command {
             strval($cert_data['validFrom_time_t']));                            
         $this->valid_to=date('m-d-Y H:i:s',                                     
             strval($cert_data['validTo_time_t']));                              
-        $this->parse_alternative_names();                                       
+        $this->parse_alternative_names();
+        }                                       
     }
     public function parse_alternative_names()
     {
@@ -58,14 +64,18 @@ class CheckSSL extends Command {
     {
         $this->target = $input->getArgument('URL');
         $this->target_port = $input->getOption('port');
-        $this->make_request();    
-        $info = "<info>Main Domain:</info> " . $this->common_name . "\n" . 
-            "<info>Alternative Domains:</info> " . "{$this->alt_domains}"  . "\n" . 
-            "<info>Issuer:</info> " . $this->issuer . "\n" . 
-            "<info>Creation Date:</info> " . $this->valid_from . 
-            "\n" . "<info>Valid Until:</info> " . $this->valid_to . "\n" . 
-            "<info>Signature Algorithm:</info> " . $this->sha_type;
-        $output->writeln("{$info}");
+        if ($this->make_request()) {
+            $output->writeln("Something went wrong...");                        
+        } else { 
+            $info = "<info>Main Domain:</info> " . $this->common_name . "\n" . 
+                "<info>Alternative Domains:</info> " . "{$this->alt_domains}"  
+                . "\n" . 
+                "<info>Issuer:</info> " . $this->issuer . "\n" . 
+                "<info>Creation Date:</info> " . $this->valid_from . 
+                "\n" . "<info>Valid Until:</info> " . $this->valid_to . "\n" . 
+                "<info>Signature Algorithm:</info> " . $this->sha_type;
+            $output->writeln("{$info}");
+        }
     }
 }
 
