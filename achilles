@@ -4,6 +4,7 @@
 
 use Heel\CheckSSL;
 use Heel\CheckCiphers;
+use Heel\Screenshot;
 use Symfony\Component\Console\Application;
 
 require 'vendor/autoload.php';
@@ -12,6 +13,7 @@ $app = new Application('achilles', '1.0');
 
 $app->add(new CheckSSL);
 $app->add(new CheckCiphers);
+$app->add(new Screenshot);
 
 $app->run();
 
