@@ -1,6 +1,6 @@
 # What is Achilles?
 
-Achilles is a multi-purpose, modular scanning utility for websites, with a current focus on HTTPS.
+Achilles is a modular scanning utility for websites, with a focus on HTTPS.
 
 ### Version
 
